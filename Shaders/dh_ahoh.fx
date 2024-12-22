@@ -2,33 +2,26 @@
 #define PI 3.14159265359
 
 #ifndef AhOh_RENDER_SCALE
- #define AhOh_RENDER_SCALE 0.5
+ #define AhOh_RENDER_SCALE 0.333
 #endif
 
 #define getColorSamplerLod(s,c,l) tex2Dlod(s,float4((c).xy,0,l))
 
 uniform int random < source = "random"; min = 0; max = BUFFER_WIDTH*BUFFER_HEIGHT; >;
 
-uniform int iRadius <ui_category="Quality"; ui_type = "slider"; ui_label = "Radius"; ui_min = 1; ui_max = 256; ui_step = 1;> = 128;
+uniform int iRadius <ui_category="Quality"; ui_type = "slider"; ui_label = "Radius"; ui_min = 1; ui_max = 256; ui_step = 1;> = 32;
 uniform int iSamples <ui_category="Quality"; ui_type = "slider"; ui_label = "Samples count"; ui_min = 1; ui_max = 256; ui_step = 1;> = 128;
 
 uniform bool bDenoise <ui_category="Denoising"; ui_label = "Enable";> = true;
 uniform int iDenoiseStep <ui_category="Denoising"; ui_type = "slider"; ui_label = "Radius"; ui_min = 1; ui_max = 8; ui_step = 1;> = 2;
 uniform float fDenoiseLod <ui_category="Denoising"; ui_type = "slider"; ui_label = "LOD"; ui_min = 0.0; ui_max = 5.0; ui_step = 0.1;> = 1.0;
 
-uniform bool bHighlights <ui_category="Highlights"; ui_label = "Highligts"; > = true;
-uniform float fHighlightsThreshold <ui_category="Highlights"; ui_type = "slider"; ui_label = "Highligts threshold"; ui_min = 0; ui_max = 1.0; ui_step = 0.001;> = 0.75;
-uniform float fHighlightsStrength <ui_category="Highlights"; ui_type = "slider"; ui_label = "Highligts strength"; ui_min = 0; ui_max = 4; ui_step = 0.001;> = 1.0;
+uniform bool bHighlights <ui_category="Highlights"; ui_label = "Highlights"; > = true;
+uniform float fHighlightsThreshold <ui_category="Highlights"; ui_type = "slider"; ui_label = "Highlights threshold"; ui_min = 0; ui_max = 1.0; ui_step = 0.001;> = 0.75;
+uniform float fHighlightsStrength <ui_category="Highlights"; ui_type = "slider"; ui_label = "Highlights strength"; ui_min = 0; ui_max = 4; ui_step = 0.001;> = 0.25;
 
 uniform bool bStaticNoise <ui_category="Debug"; ui_label = "Static noise";> = false;
 uniform bool bDebug <ui_category="Debug"; ui_label = "Debug";> = false;
-
-/*
-uniform bool bTest = true;
-uniform float fTest < ui_type = "slider"; ui_label = "fTest"; ui_min = 0.0; ui_max = 1.0; ui_step = 0.001;> = 0.0;
-uniform float fTest2 < ui_type = "slider"; ui_label = "fTest2"; ui_min = 0.0; ui_max = 1.0; ui_step = 0.001;> = 0.0;
-uniform int iTest < ui_type = "slider"; ui_label = "iTest"; ui_min = 1; ui_max = 64; ui_step = 1;> = 1;
-*/
 
 texture rawAoTex { Width = BUFFER_WIDTH*AhOh_RENDER_SCALE; Height = BUFFER_HEIGHT*AhOh_RENDER_SCALE; Format = RG16F; MipLevels = 6;  };
 sampler rawAoSampler { Texture = rawAoTex; MinLOD = 0.0f; MaxLOD = 5.0f;};
@@ -45,8 +38,6 @@ float randomValue(inout uint seed) {
 bool inScreen(float2 coords) {
 	return coords.x>=0 && coords.y>=0 && coords.x<=1 && coords.y<=1;
 }
-
-
     								
 void PS_AhOh(in float4 position : SV_Position, in float2 coords : TEXCOORD, out float2 outPixel : SV_Target) {
 	float3 coordsInt = float3(coords * int2(BUFFER_WIDTH,BUFFER_HEIGHT),ReShade::GetLinearizedDepth(coords));
